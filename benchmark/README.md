@@ -43,3 +43,17 @@ resnet18_local_0.5_finetuned.pt,local,0.5,0.50,finetuned,44.7,278.0,12.4,1.8
 ### 4. 実験結果の再現手順（段階 P4 で追記予定）
 
 <!-- TODO: P4 期間中に、環境構築手順・コマンド・シード値などの再現手順をここに記載する -->
+
+### Note
+git status
+git add benchmark/
+git commit -m "mô tả việc bạn vừa làm"
+git push
+
+### Lưu ý quan trọng khi làm việc nhóm
+Trước khi bắt đầu một ngày làm việc mới, bạn nên cập nhật những thay đổi mới nhất mà Khang hoặc Hòa vừa merge vào nhánh chính (main) về nhánh của mình:
+
+git checkout main
+git pull origin main
+git checkout benchmark
+git merge main
