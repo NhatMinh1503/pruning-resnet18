@@ -91,6 +91,8 @@ def main():
                               "acc_after_finetune": f"{acc:.2f}", "seed": args.seed})
     print(f"Wrote baseline row to {args.results}")
     os.remove(last_path)  # training finished; only resnet18_baseline.pt stays in checkpoints/
+    if not os.listdir(resume_dir):
+        os.rmdir(resume_dir)
 
 
 if __name__ == "__main__":
