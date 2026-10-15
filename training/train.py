@@ -1,7 +1,7 @@
 """Step 1: train the baseline ResNet-18 on CIFAR-10 and save resnet18_baseline.pt.
 
 Colab (GPU on):
-    python training/train.py --ckpt-dir /content/drive/MyDrive/pruning-resnet18/checkpoints
+    python training/train.py --ckpt-dir /content/drive/MyDrive/pruning-project/checkpoints
 
 Safe to re-run after a Colab disconnect: it resumes from checkpoints/_resume/baseline_last.pt
 (kept out of checkpoints/ top level so benchmark/ never picks it up; deleted when training finishes).
@@ -23,7 +23,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--data-dir", default="./data")
-    p.add_argument("--ckpt-dir", default="/content/drive/MyDrive/pruning-resnet18/checkpoints")
+    p.add_argument("--ckpt-dir", default="/content/drive/MyDrive/pruning-project/checkpoints")
     p.add_argument("--results", default=os.path.join(REPO_ROOT, "results", "accuracy.csv"))
     p.add_argument("--epochs", type=int, default=100)
     p.add_argument("--batch-size", type=int, default=128)

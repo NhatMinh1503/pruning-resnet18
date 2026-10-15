@@ -41,7 +41,7 @@ DEFAULT_SPARSITIES = "0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9"
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--data-dir", default="./data")
-    p.add_argument("--ckpt-dir", default="/content/drive/MyDrive/pruning-resnet18/checkpoints")
+    p.add_argument("--ckpt-dir", default="/content/drive/MyDrive/pruning-project/checkpoints")
     p.add_argument("--results", default=os.path.join(REPO_ROOT, "results", "accuracy.csv"))
     p.add_argument("--methods", default="local,global")
     p.add_argument("--sparsities", default=DEFAULT_SPARSITIES)
