@@ -10,34 +10,13 @@ import time
 import zipfile
 from typing import Dict, List, Tuple
 
-import numpy as np
 import torch
 import torch.nn as nn
 from thop import profile
 
-# Thêm thư mục gốc của repo vào sys.path để import được module training/
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if ROOT_DIR not in sys.path:
-    sys.path.insert(0, ROOT_DIR)
-
-try:
-    from training.common import build_model, load_weights
-except ImportError:
-    # Fallback an toàn nếu nhánh benchmark chưa kịp merge training/common.py từ nhánh main
-    import torchvision.models as models
-
-    def build_model(num_classes: int = 10) -> nn.Module:
-        m = models.resnet18(weights=None, num_classes=num_classes)
-        m.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
-        m.maxpool = nn.Identity()
-        return m
-
-    def load_weights(model: nn.Module, checkpoint_path: str) -> nn.Module:
-        ckpt = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
-        state_dict = ckpt.get("model_state_dict", ckpt.get("state_dict", ckpt)) if isinstance(ckpt, dict) else ckpt
-        model.load_state_dict(state_dict)
-        return model
-
+# Thêm thư mục gốc của repo vào sys.path để import được training/
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from training.common import build_model, load_weights
 
 SEED = 42
 
@@ -45,7 +24,6 @@ SEED = 42
 def set_seed(seed: int = SEED) -> None:
     """Cố định seed = 42 theo quy ước chung của nhóm."""
     random.seed(seed)
-    np.random.seed(seed)
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
