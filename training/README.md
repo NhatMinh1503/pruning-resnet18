@@ -34,21 +34,32 @@ All saved `.pt` files are plain `state_dict`s (no `weight_orig`/`weight_mask`).
 
 Fine-tuning re-applies the pruning mask after every optimizer step, so pruned weights stay 0.
 
-## Run on Colab (Runtime -> GPU)
+## Run on Colab
+
+**Easiest:** open [`training/colab_training.ipynb`](colab_training.ipynb) in Colab
+([open directly](https://colab.research.google.com/github/NhatMinh1503/pruning-resnet18/blob/main/training/colab_training.ipynb))
+and run the cells top to bottom. GPU (T4) is preset.
+
+One-time setup: Google Drive → *Shared with me* → right-click `pruning-project` →
+**Organize → Add shortcut → My Drive**, so Colab can see it at `/content/drive/MyDrive/pruning-project`.
+
+| Shared Drive path | Content |
+|---|---|
+| `pruning-project/checkpoints/` | `resnet18_baseline.pt` + `resnet18_{method}_{sparsity}_{raw\|finetuned}.pt` |
+| `pruning-project/results/accuracy.csv` | Latest accuracy table (copied back to `results/` in Git) |
+
+Manual commands (same as the notebook):
 
 ```python
 from google.colab import drive; drive.mount('/content/drive')
-# branch `training` must be pushed to GitHub first (git push -u origin training)
-!git clone -b training https://github.com/NhatMinh1503/pruning-resnet18.git
+!git clone https://github.com/NhatMinh1503/pruning-resnet18.git
 %cd pruning-resnet18
-!pip install -q thop fvcore
-
-CK = "/content/drive/MyDrive/pruning-resnet18/checkpoints"
-# Step 1 (resumes automatically if Colab disconnects)
-!python training/train.py --ckpt-dir $CK
-# Step 3 (after pruning/prune.py is merged); can be split by --methods / --sparsities
-!python training/run_pruning.py --ckpt-dir $CK --methods local
-!python training/run_pruning.py --ckpt-dir $CK --methods global
+CK = "/content/drive/MyDrive/pruning-project/checkpoints"
+!python training/train.py --data-dir /content/data --ckpt-dir {CK}          # baseline (done 2026-10-12: 95.10%)
+!python training/run_pruning.py --data-dir /content/data --ckpt-dir {CK} --methods local
+!python training/run_pruning.py --data-dir /content/data --ckpt-dir {CK} --methods global
 ```
+
+Measured on Colab T4: ~28 s/epoch (baseline 100 epochs ≈ 47 min). Scripts resume / skip finished work after a disconnect.
 
 Pipeline test without GPU / dataset: `python training/train.py --smoke --ckpt-dir ./ck`.
