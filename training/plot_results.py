@@ -6,6 +6,8 @@ Figures (English labels so they render on any machine without CJK fonts):
   q1_q2_accuracy_before_finetune.png  Q1 + Q2: accuracy right after pruning, local vs global
   q3_accuracy_after_finetune.png      Q3: accuracy after fine-tuning (zoomed axis), local vs global
   q3_recovery.png                     Q3: points recovered by fine-tuning (after - before)
+  q4_flops_vs_latency.png             Q4: sparse FLOPs vs measured latency, % of baseline
+                                      (needs results/efficiency.csv from benchmark/)
 """
 import csv
 import os
@@ -16,6 +18,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CSV_PATH = os.path.join(REPO_ROOT, "results", "accuracy.csv")
+EFF_PATH = os.path.join(REPO_ROOT, "results", "efficiency.csv")
 OUT_DIR = os.path.join(REPO_ROOT, "training", "figures")
 
 # Reference palette: categorical slots 1-2 (blue, orange) + neutral inks
@@ -127,6 +130,51 @@ def plot_recovery(baseline, data):
     return fig
 
 
+def plot_q4(path=EFF_PATH):
+    """Finetuned checkpoints only, everything as % of the baseline row."""
+    rows = list(csv.DictReader(open(path, newline="")))
+    base = next(r for r in rows if r["method"] == "baseline")
+    b = {k: float(base[k]) for k in ("flops_sparse_m", "latency_cpu_ms", "latency_gpu_ms")}
+    ft = [r for r in rows if r["status"] == "finetuned"]
+    xs = sorted({float(r["sparsity_target"]) for r in ft})
+
+    def series(method, key):
+        d = {float(r["sparsity_target"]): float(r[key]) for r in ft if r["method"] == method}
+        return [100.0] + [d[x] / b[key] * 100 for x in xs]
+
+    def mean_latency(key):
+        return [100.0] + [sum(float(r[key]) for r in ft if float(r["sparsity_target"]) == x)
+                          / sum(1 for r in ft if float(r["sparsity_target"]) == x) / b[key] * 100
+                          for x in xs]
+
+    X = [0.0] + xs
+    fig, ax = plt.subplots(figsize=(8, 4.8), dpi=150)
+    flops_style = {"local": ("#9a9893", "-"), "global": ("#9a9893", "--")}
+    for m in ("local", "global"):
+        c, ls = flops_style[m]
+        ys = series(m, "flops_sparse_m")
+        ax.plot(X, ys, color=c, linestyle=ls, linewidth=2, marker="o", markersize=4,
+                label=f"Sparse FLOPs - {m}")
+        ax.annotate(f"{ys[-1]:.0f}%", (X[-1], ys[-1]), textcoords="offset points",
+                    xytext=(8, 0), va="center", fontsize=9, color=INK2)
+    # aqua / violet: blue & orange already mean local / global in the other figures
+    for key, label, c, dy in (("latency_cpu_ms", "Latency CPU (mean of local/global)", "#1baf7a", -8),
+                              ("latency_gpu_ms", "Latency GPU (mean of local/global)", "#6250d6", 8)):
+        ys = mean_latency(key)
+        ax.plot(X, ys, color=c, linewidth=2.5, marker="o", markersize=5,
+                markeredgecolor=SURFACE, markeredgewidth=1.2, label=label)
+        ax.annotate(f"{ys[-1]:.0f}%", (X[-1], ys[-1]), textcoords="offset points",
+                    xytext=(8, dy), va="center", fontsize=9, color=INK)
+    ax.axhline(100, color=INK2, linestyle=":", linewidth=1)
+    pct_ticks(ax, X)
+    ax.set_ylim(0, 120)
+    ax.set_xlim(-0.04, 0.98)
+    style(ax, "Q4  FLOPs drop up to 90%, latency stays ~100% of baseline",
+          "% of baseline (baseline = 100%)")
+    ax.legend(frameon=False, loc="lower left", fontsize=8.5)
+    return fig
+
+
 def main():
     baseline, data = load()
     os.makedirs(OUT_DIR, exist_ok=True)
@@ -135,6 +183,10 @@ def main():
         "q3_accuracy_after_finetune.png": plot_after(baseline, data),
         "q3_recovery.png": plot_recovery(baseline, data),
     }
+    if os.path.exists(EFF_PATH):
+        figs["q4_flops_vs_latency.png"] = plot_q4()
+    else:
+        print("skip Q4: results/efficiency.csv not found")
     for name, fig in figs.items():
         fig.tight_layout()
         path = os.path.join(OUT_DIR, name)
