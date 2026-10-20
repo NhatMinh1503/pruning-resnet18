@@ -1,0 +1,7 @@
+model,kind,params_m,nonzero_params_m,state_dict_mb,eff_flops_m,latency_bs1_ms,latency_bs64_ms
+dense,baseline,11.17,11.17,42.7,1110.8,21.00,581.3
+local_0.5,unstructured,11.17,5.59,42.7,555.4,22.89,627.4
+local_0.9,unstructured,11.17,1.12,42.7,111.1,20.48,596.9
+structured_0.25,structured,8.43,8.42,32.2,837.2,18.04,521.3
+structured_0.5,structured,5.68,5.68,21.7,563.5,16.06,347.8
+structured_0.75,structured,2.93,2.93,11.2,289.8,11.03,246.7
