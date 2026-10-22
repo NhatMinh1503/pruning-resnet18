@@ -4,8 +4,8 @@ Owner: Hoa.  Place this file at pruning/prune.py in the repo.
 
 Public API
 ----------
-local_prune(model, sparsity)   -> pruned copy, each layer pruned to `sparsity`
-global_prune(model, sparsity)  -> pruned copy, whole network pruned to `sparsity`
+local_prune(model, sparsity, exclude=())   -> pruned copy, each layer pruned to `sparsity`
+global_prune(model, sparsity, exclude=())  -> pruned copy, whole network pruned to `sparsity`
 count_sparsity(model)          -> fraction of zero weights in Conv2d/Linear layers
 make_permanent(model)          -> bake the masks into the weights (call AFTER fine-tuning)
 
@@ -29,13 +29,20 @@ import torch.nn as nn
 import torch.nn.utils.prune as prune
 
 
-def _prunable_layers(model):
-    """Return [(module, 'weight'), ...] for every Conv2d and Linear layer."""
-    return [
-        (m, "weight")
-        for m in model.modules()
+def _prunable_layers(model, exclude=()):
+    """Return [(module, 'weight'), ...] for every Conv2d and Linear layer.
+
+    Layers whose name is in `exclude` (e.g. "fc", "conv1") are skipped.
+    """
+    layers = {
+        name: m
+        for name, m in model.named_modules()
         if isinstance(m, (nn.Conv2d, nn.Linear))
-    ]
+    }
+    unknown = set(exclude) - set(layers)
+    if unknown:
+        raise ValueError(f"unknown layer names in exclude: {sorted(unknown)}")
+    return [(m, "weight") for name, m in layers.items() if name not in exclude]
 
 
 def _check_sparsity(sparsity):
@@ -43,28 +50,30 @@ def _check_sparsity(sparsity):
         raise ValueError(f"sparsity must be in [0, 1), got {sparsity}")
 
 
-def local_prune(model, sparsity):
+def local_prune(model, sparsity, exclude=()):
     """Layer-wise L1 magnitude pruning: every layer loses `sparsity` of its weights.
 
+    Layers named in `exclude` are left dense.
     Returns a pruned deep copy; the input model is not modified.
     """
     _check_sparsity(sparsity)
     pruned = copy.deepcopy(model)
-    for module, name in _prunable_layers(pruned):
+    for module, name in _prunable_layers(pruned, exclude):
         prune.l1_unstructured(module, name=name, amount=sparsity)
     return pruned
 
 
-def global_prune(model, sparsity):
+def global_prune(model, sparsity, exclude=()):
     """Global L1 magnitude pruning: the smallest `sparsity` of ALL weights are removed.
 
     Layers with many small weights are pruned more than the others.
+    Layers named in `exclude` are left dense and `sparsity` applies to the rest.
     Returns a pruned deep copy; the input model is not modified.
     """
     _check_sparsity(sparsity)
     pruned = copy.deepcopy(model)
     prune.global_unstructured(
-        _prunable_layers(pruned),
+        _prunable_layers(pruned, exclude),
         pruning_method=prune.L1Unstructured,
         amount=sparsity,
     )
@@ -134,4 +143,14 @@ if __name__ == "__main__":
     assert abs(count_sparsity(glo) - before) < 1e-9
     out = glo(torch.randn(2, 3, 32, 32))
     assert out.shape == (2, 10)
+
+    # exclude keeps the named layers dense.
+    loc = local_prune(base, 0.9, exclude=("fc",))
+    assert dict(layer_sparsity(loc))["fc"] == 0.0
+    assert abs(dict(layer_sparsity(loc))["conv1"] - 0.9) < 0.01
+    try:
+        local_prune(base, 0.5, exclude=("no_such_layer",))
+        raise AssertionError("unknown layer name should raise")
+    except ValueError:
+        pass
     print("all checks passed")
