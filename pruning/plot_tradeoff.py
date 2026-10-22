@@ -1,7 +1,7 @@
 """Accuracy vs effective FLOPs (Q2) and FLOPs vs real latency (Q4/Q5).
 
-Owner: Hoa.  Reads results/accuracy.csv, results/efficiency.csv and
-results/structured_speed_prelim.csv; writes results/figures/q2_q5_tradeoff.png.
+Owner: Hoa.  Reads results/accuracy.csv, results/efficiency.csv,
+results/structured_speed_prelim.csv and (if present) results/structured.csv; writes results/figures/q2_q5_tradeoff.png.
 
     python pruning/plot_tradeoff.py
 """
@@ -47,6 +47,16 @@ def main():
         a.annotate(f"{method} {last.sparsity:.0%}: {last.acc_after_finetune:.2f}%",
                    (last.flops_pct, last.acc_after_finetune), textcoords="offset points",
                    xytext=(8, -4), fontsize=8, color=INK)
+    st_path = os.path.join(R, "structured.csv")
+    if os.path.exists(st_path):  # written by run_structured.py on Colab
+        st = pd.read_csv(st_path)
+        st = st[(st.method == "structured") & st.acc_after_finetune.notna()]
+        if len(st):
+            st = st.sort_values("ratio", ascending=False)
+            base_dense = pd.read_csv(st_path).query("method == 'baseline'").flops_m.iloc[0]
+            a.plot(100 * st.flops_m / base_dense, st.acc_after_finetune, color=AQUA, lw=2,
+                   marker="s", ms=5, markeredgecolor="white", markeredgewidth=1.5,
+                   label="structured (fine-tuned)")
     a.axhline(95.10, color=MUTED, lw=1, ls="--")
     a.text(101, 95.12, "baseline 95.10%", fontsize=8, color=MUTED, ha="right", va="bottom")
     a.set_xlabel("Effective FLOPs (% of baseline, zeros skipped)", color=INK, fontsize=9)
