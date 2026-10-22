@@ -1,4 +1,4 @@
-"""Plot results/accuracy.csv for Q1-Q3 -> training/figures/*.png
+"""Plot results/accuracy.csv (+ efficiency.csv) for Q1-Q4 -> results/figures/*.png
 
     python training/plot_results.py
 
@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CSV_PATH = os.path.join(REPO_ROOT, "results", "accuracy.csv")
 EFF_PATH = os.path.join(REPO_ROOT, "results", "efficiency.csv")
-OUT_DIR = os.path.join(REPO_ROOT, "training", "figures")
+OUT_DIR = os.path.join(REPO_ROOT, "results", "figures")
 
 # Reference palette: categorical slots 1-2 (blue, orange) + neutral inks
 COLORS = {"local": "#2a78d6", "global": "#eb6834"}
