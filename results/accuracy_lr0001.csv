@@ -1,0 +1,7 @@
+method,sparsity,acc_before_finetune,acc_after_finetune,seed
+local,0.1,95.10,95.04,42
+local,0.2,95.11,95.07,42
+local,0.3,95.03,95.02,42
+global,0.1,95.11,95.08,42
+global,0.2,95.12,95.05,42
+global,0.3,95.10,95.10,42
