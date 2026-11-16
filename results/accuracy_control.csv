@@ -1,0 +1,2 @@
+method,sparsity,acc_before_finetune,acc_after_finetune,seed
+baseline_ft10,0.0,95.10,94.68,42
