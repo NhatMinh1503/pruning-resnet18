@@ -63,3 +63,28 @@ CK = "/content/drive/MyDrive/pruning-project/checkpoints"
 Measured on Colab T4: ~28 s/epoch (baseline 100 epochs ≈ 47 min). Scripts resume / skip finished work after a disconnect.
 
 Pipeline test without GPU / dataset: `python training/train.py --smoke --ckpt-dir ./ck`.
+
+## Experiments for 報告会2
+
+| Script | Answers | Output |
+|---|---|---|
+| `flops_breakdown.py` | "Where do the FLOPs come from?" Per-layer FLOPs and a cross-check of the two counting methods (thop vs own hook) | `results/flops_breakdown.csv` |
+| `finetune_control.py` | "Pruned models got 10 extra epochs. Is that fair?" Fine-tunes the unpruned baseline with the same recipe | `results/accuracy_control.csv` |
+| `aggregate_seeds.py` | "Only 1 seed?" Mean ± std over seeds (`accuracy.csv` + `accuracy_seed*.csv`) | `results/accuracy_seeds_summary.csv`, `results/figures/q1_q3_seeds.png` |
+
+Colab: section 5 of `colab_training.ipynb` (5A control, 5B/5C one new seed, 5D aggregate).
+Each new seed trains its own baseline into `pruning-project/checkpoints_seed{N}/`. Pruned/fine-tuned
+checkpoints of extra seeds stay in `/content` (only the CSV matters), saving ~1.5 GB of Drive per seed.
+
+### FLOPs: the two methods
+
+| | Method A: `thop.profile` | Method B: own forward hook (`benchmark/measure.py`) |
+|---|---|---|
+| Counts | every module (Conv, Linear, BN, ReLU, pooling, add) | Conv2d and Linear only |
+| Looks at weight values? | no | yes: `sparse` counts only weights ≠ 0 |
+| Baseline | 1115.78 MFLOPs (`flops_m`) | 1110.85 MFLOPs dense (`flops_sparse_m` of baseline) |
+| Formula | thop's per-module MAC rules | Conv: `weight.numel() × H_out × W_out` MACs, Linear: `weight.numel()` MACs |
+
+Both use FLOPs = 2 × MACs, input (1, 3, 32, 32). Example: `layer1.0.conv1` = 64×64×3×3 = 36,864 weights
+× 32×32 outputs = 37.75 M MACs = 75.50 MFLOPs. Summing dense FLOPs × (1 − layer sparsity) over
+`results/layer_sparsity.csv` reproduces the measured sparse FLOPs (Local 90% 111.08, Global 90% 281.76 vs 281.75).
