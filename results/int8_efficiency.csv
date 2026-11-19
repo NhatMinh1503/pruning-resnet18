@@ -1,0 +1,9 @@
+checkpoint_name,method,sparsity_target,status,quant_engine,calib_batches,calib_mode,fp32_size_mb,int8_size_mb,size_reduction_pct,fp32_zip_mb,int8_zip_mb,zip_reduction_pct,fp32_lat_bs1_ms,int8_lat_bs1_ms,speedup_bs1,fp32_lat_bs16_ms,int8_lat_bs16_ms,speedup_bs16,fp32_lat_bs64_ms,int8_lat_bs64_ms,speedup_bs64,fp32_acc,int8_acc,acc_drop
+resnet18_baseline.pt,baseline,0.0,baseline,onednn,10,real,42.70,10.78,74.75,39.68,9.03,77.24,18.557,7.758,2.39,201.449,105.156,1.92,774.782,382.376,2.03,95.10,94.12,0.98
+resnet18_local_0.5_finetuned.pt,local,0.5,finetuned,onednn,10,real,42.70,10.78,74.75,23.68,6.54,72.37,18.378,7.870,2.34,196.441,106.169,1.85,768.885,379.378,2.03,94.90,94.05,0.85
+resnet18_local_0.9_finetuned.pt,local,0.9,finetuned,onednn,10,real,42.70,10.78,74.75,7.71,2.07,73.20,20.427,7.538,2.71,186.091,104.576,1.78,729.344,399.806,1.82,94.10,93.07,1.03
+resnet18_global_0.5_finetuned.pt,global,0.5,finetuned,onednn,10,real,42.70,10.78,74.75,23.10,6.18,73.24,26.204,7.632,3.43,183.882,108.135,1.70,719.018,371.896,1.93,94.90,94.13,0.77
+resnet18_global_0.9_finetuned.pt,global,0.9,finetuned,onednn,10,real,42.70,10.78,74.75,7.18,1.77,75.30,21.394,7.776,2.75,184.469,105.185,1.75,724.766,380.773,1.90,94.69,93.91,0.78
+resnet18_structured_0.25_finetuned.pt,structured,0.25,finetuned,onednn,10,real,32.22,8.15,74.70,29.91,6.89,76.96,15.369,8.948,1.72,145.918,70.049,2.08,610.139,291.529,2.09,94.67,93.52,1.15
+resnet18_structured_0.5_finetuned.pt,structured,0.5,finetuned,onednn,10,real,21.73,5.52,74.58,20.17,4.70,76.69,11.418,5.127,2.23,113.302,52.653,2.15,452.681,201.424,2.25,94.38,93.17,1.21
+resnet18_structured_0.75_finetuned.pt,structured,0.75,finetuned,onednn,10,real,11.25,2.90,74.26,10.43,2.48,76.24,8.054,3.566,2.26,71.691,30.940,2.32,254.229,118.898,2.14,93.77,92.77,1.00
