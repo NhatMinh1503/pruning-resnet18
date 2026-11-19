@@ -1,0 +1,4 @@
+method,sparsity,n_seeds,before_mean,before_std,after_mean,after_std
+structured,0.25,3,92.53,0.34,94.64,0.11
+structured,0.5,3,69.21,3.13,94.42,0.04
+structured,0.75,3,12.91,1.44,93.69,0.07
