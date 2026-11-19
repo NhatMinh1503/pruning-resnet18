@@ -70,9 +70,10 @@ Pipeline test without GPU / dataset: `python training/train.py --smoke --ckpt-di
 |---|---|---|
 | `flops_breakdown.py` | "Where do the FLOPs come from?" Per-layer FLOPs and a cross-check of the two counting methods (thop vs own hook) | `results/flops_breakdown.csv` |
 | `finetune_control.py` | "Pruned models got 10 extra epochs. Is that fair?" Fine-tunes the unpruned baseline with the same recipe | `results/accuracy_control.csv` |
+| `finetune_structured.py` | Q5: channel pruning (pruning/structured.py) + fine-tune with the Q3 recipe, 25/50/75% | `results/accuracy_structured[_seedN].csv`, `resnet18_structured_{r}_{raw\|finetuned}.pt` |
 | `aggregate_seeds.py` | "Only 1 seed?" Mean ± std over seeds (`accuracy.csv` + `accuracy_seed*.csv`) | `results/accuracy_seeds_summary.csv`, `results/figures/q1_q3_seeds.png` |
 
-Colab: section 5 of `colab_training.ipynb` (5A control, 5B/5C one new seed, 5D aggregate).
+Colab: section 5 of `colab_training.ipynb` (5A control, 5B/5C one new seed, 5D aggregate, 5E control per seed) and section 6 (Q5 structured fine-tune).
 Each new seed trains its own baseline into `pruning-project/checkpoints_seed{N}/`. Pruned/fine-tuned
 checkpoints of extra seeds stay in `/content` (only the CSV matters), saving ~1.5 GB of Drive per seed.
 
