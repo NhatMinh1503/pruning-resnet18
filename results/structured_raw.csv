@@ -1,0 +1,5 @@
+method,ratio,params_m,file_size_mb,flops_m,latency_cpu_ms,latency_gpu_ms,acc_before_finetune,acc_after_finetune,seed
+baseline,0.0,11.174,42.70,1115.78,13.256,,95.10,95.10,42
+structured,0.25,8.427,32.22,841.61,10.960,,92.63,,42
+structured,0.5,5.679,21.73,567.44,8.497,,67.18,,42
+structured,0.75,2.932,11.25,293.27,6.336,,14.22,,42

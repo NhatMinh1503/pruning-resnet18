@@ -1,0 +1,18 @@
+config,method,sparsity,layer_sparsity,real_sparsity,acc_raw
+baseline,none,0.0,0.0,0.0,95.10
+local: all layers,local,0.8,0.8,0.8000,63.43
+local: keep small layers dense,local,0.8,0.8,0.7872,79.65
+local: keep small layers dense (matched),local,0.8,0.813,0.8000,71.99
+global: all layers,global,0.8,0.8,0.8000,88.57
+local: prune ONLY layer1,local,0.8,0.8,0.0106,94.55
+local: prune ONLY layer2,local,0.8,0.8,0.0370,91.44
+local: prune ONLY layer3,local,0.8,0.8,0.1479,92.17
+local: prune ONLY layer4,local,0.8,0.8,0.5917,94.87
+local: all layers,local,0.9,0.9,0.9000,24.50
+local: keep small layers dense,local,0.9,0.9,0.8856,23.22
+local: keep small layers dense (matched),local,0.9,0.9147,0.9000,11.16
+global: all layers,global,0.9,0.9,0.9000,57.15
+local: prune ONLY layer1,local,0.9,0.9,0.0119,93.11
+local: prune ONLY layer2,local,0.9,0.9,0.0416,69.41
+local: prune ONLY layer3,local,0.9,0.9,0.1664,56.81
+local: prune ONLY layer4,local,0.9,0.9,0.6657,93.82

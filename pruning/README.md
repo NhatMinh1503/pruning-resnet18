@@ -66,3 +66,23 @@ Outputs:
 ```bash
 python pruning/prune.py   # prints "all checks passed"
 ```
+
+## Experiments (Q2, Q5)
+
+| File | Output |
+|---|---|
+| `ablate_layers.py` | `results/ablation_layers.csv`: keep fc / conv1 / downsample dense |
+| `ablate_stages.py` | `results/ablation_stages.csv`: prune only layer1..4, matched sparsity |
+| `structured.py`, `run_structured.py` | `results/structured.csv` (Colab, with fine-tune), `results/structured_raw.csv` (no fine-tune) |
+| `plot_tradeoff.py`, `plot_ablation.py` | `results/figures/q2_q5_tradeoff.png`, `results/figures/q2_stage_ablation.png` |
+| `colab_pruning.ipynb` | runs all of the above on Colab |
+
+Results so far (test accuracy right after pruning, no fine-tune, baseline 95.10%):
+
+- Local collapses at 90% because of **layer2 and layer3**: pruning only layer3 to 90% (18.5% of the
+  weights) gives 56.8%, pruning only layer2 gives 69.4%, while pruning only layer4 (74% of the
+  weights) still gives 93.8%. Global keeps layer2/3 at ~56-83% sparsity, which is why it survives.
+- Small layers: keeping fc + conv1 + downsample dense helps at 80% (63.4% -> 72.0% at the same
+  total sparsity) but not at 90%.
+- Structured (channel) pruning before fine-tune: 25% -> 92.6%, 50% -> 67.2%, 75% -> 14.2%, so it
+  needs fine-tuning much more than unstructured pruning (Local 50% is still 94.4%).

@@ -51,7 +51,7 @@ def parse_args():
     p.add_argument("--data-dir", default=os.path.join(REPO_ROOT, "data"))
     p.add_argument("--ckpt-dir", default=os.path.join(REPO_ROOT, "checkpoints"))
     p.add_argument("--csv", default=os.path.join(REPO_ROOT, "results", "structured.csv"))
-    p.add_argument("--ft-epochs", type=int, default=10)
+    p.add_argument("--ft-epochs", type=int, default=10, help="0 = no fine-tune (raw accuracy only)")
     p.add_argument("--ft-lr", type=float, default=0.01)
     p.add_argument("--num-workers", type=int, default=2)
     p.add_argument("--smoke", action="store_true", help="fake data, 1 epoch")
@@ -119,11 +119,11 @@ def main():
             row["acc_before_finetune"] = f"{evaluate(model.to(device), test_loader, device):.2f}"
             if r == 0.0:
                 row["acc_after_finetune"] = row["acc_before_finetune"]
-            else:
+            elif args.ft_epochs > 0:
                 set_seed(SEED)
                 fine_tune(model, train_loader, device, args.ft_epochs, args.ft_lr)
                 row["acc_after_finetune"] = f"{evaluate(model, test_loader, device):.2f}"
-        stage = "finetuned" if (with_acc and r > 0) else "raw"
+        stage = "finetuned" if (with_acc and r > 0 and args.ft_epochs > 0) else "raw"
         path = os.path.join(args.ckpt_dir, f"resnet18_{tag}_{stage}.pt")
         row["file_size_mb"] = f"{file_size_mb(model.cpu(), path):.2f}"
         row.update(speed(model))

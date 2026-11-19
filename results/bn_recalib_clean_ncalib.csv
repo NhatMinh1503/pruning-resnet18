@@ -1,0 +1,16 @@
+method,sparsity,n_calib,acc_bn_recalib,seed
+local,0.9,64,73.50,42
+local,0.9,256,76.69,42
+local,0.9,1000,77.30,42
+local,0.9,4000,77.34,42
+local,0.9,16000,77.23,42
+global,0.9,64,87.76,42
+global,0.9,256,88.73,42
+global,0.9,1000,89.06,42
+global,0.9,4000,89.44,42
+global,0.9,16000,89.31,42
+structured,0.5,64,90.44,42
+structured,0.5,256,90.63,42
+structured,0.5,1000,90.74,42
+structured,0.5,4000,90.81,42
+structured,0.5,16000,90.79,42
