@@ -1,0 +1,5 @@
+method,sparsity,acc_before_finetune,acc_after_finetune,seed
+baseline,0.0,95.10,95.10,42
+structured,0.25,92.63,94.67,42
+structured,0.5,67.20,94.38,42
+structured,0.75,14.21,93.77,42
