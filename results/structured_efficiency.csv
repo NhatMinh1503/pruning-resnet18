@@ -1,0 +1,12 @@
+checkpoint_name,method,sparsity_target,actual_sparsity,status,file_size_mb,zip_size_mb,flops_m,flops_sparse_m,latency_cpu_ms,latency_gpu_ms,params_m,nonzero_params_m,latency_cpu_bs1_ms,latency_gpu_bs1_ms,latency_cpu_bs16_ms,latency_gpu_bs16_ms,latency_cpu_bs64_ms,latency_gpu_bs64_ms
+resnet18_baseline.pt,baseline,0.0,0.0000,baseline,42.70,39.68,1115.78,1110.85,19.489,3.827,11.174,11.174,19.489,3.827,208.959,4.681,805.299,13.459
+resnet18_local_0.5_finetuned.pt,local,0.5,0.5000,finetuned,42.70,23.68,1115.78,555.42,22.087,2.883,11.174,5.592,22.087,2.883,190.777,4.637,814.459,13.419
+resnet18_local_0.9_finetuned.pt,local,0.9,0.9000,finetuned,42.70,7.71,1115.78,111.08,18.791,3.464,11.174,1.126,18.791,3.464,201.769,4.579,806.834,13.176
+resnet18_global_0.5_finetuned.pt,global,0.5,0.5000,finetuned,42.70,23.10,1115.78,747.43,27.982,3.017,11.174,5.592,27.982,3.017,193.183,4.628,807.299,13.420
+resnet18_global_0.9_finetuned.pt,global,0.9,0.9000,finetuned,42.70,7.18,1115.78,281.75,18.535,3.858,11.174,1.126,18.535,3.858,207.410,4.576,804.999,13.178
+resnet18_structured_0.25_raw.pt,structured,0.25,0.2460,raw,32.22,29.91,841.61,837.17,15.650,2.957,8.427,8.427,15.650,2.957,155.770,5.658,637.654,12.059
+resnet18_structured_0.25_finetuned.pt,structured,0.25,0.2460,finetuned,32.22,29.91,841.61,837.17,16.232,4.038,8.427,8.427,16.232,4.038,154.901,5.663,648.375,12.050
+resnet18_structured_0.5_raw.pt,structured,0.5,0.4920,raw,21.73,20.17,567.44,563.49,17.133,3.063,5.679,5.679,17.133,3.063,103.346,3.435,460.690,8.824
+resnet18_structured_0.5_finetuned.pt,structured,0.5,0.4920,finetuned,21.73,20.17,567.44,563.49,11.985,2.945,5.679,5.679,11.985,2.945,115.246,3.389,472.941,8.767
+resnet18_structured_0.75_raw.pt,structured,0.75,0.7380,raw,11.25,10.43,293.27,289.81,7.825,2.582,2.932,2.932,7.825,2.582,78.250,2.434,300.062,6.718
+resnet18_structured_0.75_finetuned.pt,structured,0.75,0.7380,finetuned,11.25,10.43,293.27,289.81,8.165,2.730,2.932,2.932,8.165,2.730,80.469,2.409,301.328,6.709
