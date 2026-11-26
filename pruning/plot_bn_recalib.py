@@ -1,7 +1,8 @@
 """Figure: how much accuracy does BN re-calibration alone bring back?
 
-Owner: Hoa.  Reads results/bn_recalib.csv
-and results/accuracy.csv; writes results/figures/q3_bn_recalib.png.
+Owner: Hoa.  Reads results/bn_recalib.csv, results/accuracy.csv and
+results/accuracy_structured.csv (structured fine-tune, seed 42);
+writes results/figures/q3_bn_recalib.png.
 
     python pruning/plot_bn_recalib.py
 """
@@ -23,6 +24,9 @@ BN, FT = "#2a78d6", "#eb6834"                         # categorical slots 1, 2
 def main():
     bn = pd.read_csv(os.path.join(R, "bn_recalib.csv"))
     acc = pd.read_csv(os.path.join(R, "accuracy.csv"))
+    st = os.path.join(R, "accuracy_structured.csv")  # Khang, structured fine-tune (seed 42)
+    if os.path.exists(st):
+        acc = pd.concat([acc, pd.read_csv(st).query("method == 'structured'")])
     base = float(bn.query("method == 'baseline'").acc_raw.iloc[0])
 
     panels = [("local", "Local (unstructured)", "sparsity"),
